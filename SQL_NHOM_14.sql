@@ -1,0 +1,165 @@
+﻿CREATE DATABASE QUANLYLINHKIEN6;
+GO
+
+USE QUANLYLINHKIEN6;
+GO
+
+CREATE TABLE NHASANXUAT
+(
+	maNhaSanXuat VARCHAR(10) NOT NULL,
+	tenNhaSanXuat NVARCHAR(40) NOT NULL,
+	CONSTRAINT PK_NHASANXUAT PRIMARY KEY(maNhaSanXuat)
+)
+
+CREATE TABLE SANPHAMLINHKIEN
+(
+	maSanPham VARCHAR(10) NOT NULL,
+	loaiSanPham NVARCHAR(40) NOT NULL,
+	tenSanPham NVARCHAR(50) NOT NULL,
+	thoiGianBaoHanh NVARCHAR(20),
+	giaSauThue INT,
+	xuatXu NVARCHAR(50),
+	maNhaSanXuat VARCHAR(10),
+	CONSTRAINT PK_SANPHAMLINHKIEN PRIMARY KEY(maSanPham),
+)
+
+CREATE TABLE PHONGBAN
+(
+	maPhongBan VARCHAR(10),
+	tenPhongBan NVARCHAR(30)
+	CONSTRAINT PK_PHONGBAN PRIMARY KEY(maPhongBan),
+)
+
+CREATE TABLE THETHANHVIEN
+(
+	maThe VARCHAR(10),
+	uuDai NVARCHAR(30),
+	diemTichLuy INT,
+	CONSTRAINT PK_THETHANHVIEN PRIMARY KEY(maThe),
+)
+
+CREATE TABLE NHANVIEN
+(
+	maNhanVien VARCHAR(10),
+	ho NVARCHAR(20) NOT NULL,
+	dem NVARCHAR(20) NOT NULL,
+	ten NVARCHAR(20) NOT NULL,
+	gioiTinh BIT,
+	diaChi NVARCHAR(50),
+	mucLuong INT,
+	maPhongBan VARCHAR(10),
+	CONSTRAINT PK_NHANVIEN PRIMARY KEY(maNhanVien),
+	CONSTRAINT FK_NHANVIEN_MAPHONGBAN FOREIGN KEY(maPhongBan) REFERENCES PHONGBAN(maPhongBan),
+)
+
+CREATE TABLE KHACHHANG
+(
+	maKhachHang VARCHAR(10) NOT NULL,
+	ho NVARCHAR(20) NOT NULL,
+	dem NVARCHAR(20) NOT NULL,
+	ten NVARCHAR(20) NOT NULL,
+	gioiTinh BIT,
+	diaChi NVARCHAR(50),
+	soDienThoai INT,
+	maThe VARCHAR(10),
+	CONSTRAINT PK_KHACHHANG PRIMARY KEY(maKhachHang),
+	CONSTRAINT FK_KHACHHANG_MATHE FOREIGN KEY(maThe) REFERENCES THETHANHVIEN(maThe),
+)
+
+CREATE TABLE HOADON
+(
+	maHoaDon VARCHAR(10) NOT NULL,
+	ngayBan DATETIME,
+	ngayNhan DATETIME,
+	gia INT,
+	soLuongBan INT,
+	maKhachHang VARCHAR(10),
+	maSanPham VARCHAR(10),
+	maNhanVien VARCHAR(10),
+	CONSTRAINT PK_HOADON PRIMARY KEY(maHoaDon),
+	CONSTRAINT FK_HOADON_MAKHACHHANG FOREIGN KEY(maKhachHang) REFERENCES KHACHHANG(maKhachHang),
+	CONSTRAINT FK_HOADON_MANHANVIEN FOREIGN KEY(maNhanVien) REFERENCES NHANVIEN(maNhanVien),
+	CONSTRAINT FK_HOADON_MASANPHAM FOREIGN KEY(maSanPham) REFERENCES SANPHAMLINHKIEN(masanPham)
+)
+
+CREATE TABLE CO
+(
+	maSanPham VARCHAR(10),
+	maHoaDon VARCHAR(10),
+	CONSTRAINT FK_CO_MASANPHAM FOREIGN KEY(maSanPham) REFERENCES SANPHAMLINHKIEN(maSanPham),
+	CONSTRAINT FK_CO_MAHOADON FOREIGN KEY(maHoaDon) REFERENCES HOADON(maHoaDon),
+)
+
+CREATE TABLE CUNGCAP(
+	maNhaSanXuat VARCHAR(10),
+	maSanPham VARCHAR(10),
+	soLuongCungCap INT,
+	ngaySanXuat DATETIME,
+	giaTruocThue INT,
+	CONSTRAINT FK_CUNGCAP_MASANPHAM FOREIGN KEY(maSanPham) REFERENCES SANPHAMLINHKIEN(maSanPham),
+	CONSTRAINT FK_CUNGCAP_MANHASANXUAT FOREIGN KEY(maNhaSanXuat) REFERENCES NHASANXUAT(maNhaSanXuat),
+)
+
+------
+
+INSERT INTO NHASANXUAT(maNhaSanXuat,tenNhaSanXuat) VALUES
+('SX01',N'TOSHIBA'),
+('SX02',N'CORSAIR'),
+('SX03',N'MSI'),
+('SX04',N'GIGABYTE'),
+('SX05',N'INTEL')
+
+INSERT INTO SANPHAMLINHKIEN (maSanPham,tenSanPham,loaiSanPham,thoiGianBaoHanh,giaSauThue,xuatXu) VALUES
+('SP01',N'CPU',N'Linh kiện máy tính', N'3 Năm','15000000',N'Mỹ'),
+('SP02',N'RAM',N'Linh kiện máy tính', N'2 Năm','1200000',N'Mỹ'),
+('SP03',N'PIN',N'Linh kiện vi mạch', N'1 Năm', '110000',N'Singapore'),
+('SP04',N'Bút thử điện',N'Linh kiện cứng', N'3 tháng','142000',N'Trung Quốc'),
+('SP05',N'Xạc điện thoại',N'Linh kiện điện thoại', N'1 tháng','100000',N'Pháp')
+
+INSERT INTO NHANVIEN(maNhanVien,ho,dem,ten,mucLuong,diaChi,gioiTinh) VALUES
+('NV01',N'Trần',N'Minh',N'Đức',10000000,N'Quảng Ninh',0),
+('NV02',N'Phạm',N'Hưng',N'Thịnh',8000000,N'Hải Phòng',0),
+('NV03',N'Vũ',N'Khắc Đăng',N'Linh',7000000,N'Hà Nội',0),
+('NV04',N'Nguyễn',N'Hữu',N'Nam',5000000,N'Hà Nội',0),
+('NV05',N'Nguyễn',N'Tinh',N'Tú',1000000,N'Hà Nội',1)
+
+INSERT INTO THETHANHVIEN(maThe,uuDai,diemTichLuy) VALUES
+('MT01',N'giảm giá 50%','1000'),
+('MT02',N'giảm giá 30%','2000'),
+('MT03',N'giảm giá 10%','4000')
+
+INSERT INTO KHACHHANG(maKhachHang, ho, dem, ten, gioiTinh, diaChi, soDienThoai, maThe) VALUES
+('KH01',N'Trương',N'Tuấn',N'Anh', 0, N'Hà Nội','123456789','MT01'),
+('KH02',N'Vũ',N'Thu',N'Hương', 1, N'Hà Nội', '987654321', 'MT02'),
+('KH03',N'Diệp',N'Minh',N'Tùng', 0, N'Hà Nội', '246813579', 'MT03'),
+('KH04',N'Trương',N'Tuấn',N'Anh', 0, N'Hà Nội', '135792468', 'MT01'),
+('KH05',N'Phạm',N'Thùy',N'Linh', 1, N'Hà Nội','19001003', 'MT02')
+
+INSERT INTO PHONGBAN(maPhongBan,tenPhongBan) VALUES
+('PB01',N'Phòng Nhân Sự'),
+('PB02',N'Phòng Sale'),
+('PB03',N'Phòng Marketing'),
+('PB04',N'Phòng Công nghệ thông tin'),
+('PB05',N'Phòng Đối ngoại')
+
+INSERT INTO HOADON(maHoaDon,ngayBan,ngayNhan,gia,soLuongBan) VALUES
+()
+
+
+INSERT INTO CUNGCAP(soLuongCungCap,ngaySanXuat,giaTruocThue) VALUES
+('100','3/20/2022 2:15','10000000'),
+('200','1/21/2022 7:15','1000000'),
+('300','3/11/2021 11:15','1000000'),
+('400','3/3/2022 13:15','102000'),
+('500','1/16/2021 17:15','60000')
+
+-- IN RA TẤT CẢ DỮ LIỆU
+
+SELECT * FROM NHASANXUAT
+SELECT * FROM SANPHAMLINHKIEN
+SELECT * FROM NHANVIEN
+SELECT * FROM KHACHHANG
+SELECT * FROM HOADON
+SELECT * FROM PHONGBAN
+SELECT * FROM THETHANHVIEN
+SELECT * FROM CUNGCAP
